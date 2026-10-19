@@ -2,6 +2,11 @@
 
 **Mobile PWA client for [opencode](https://opencode.ai).**
 
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+![Release](https://img.shields.io/github/v/release/govorovteam-spec/opencode-pwa-mob)
+![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)
+![Docker](https://img.shields.io/badge/docker-compose-blue)
+
 opencode is a terminal AI agent. This project is a compact browser UI for it: install it on a VPS, open it from your phone, and talk to the agent that works in your project.
 
 > Коротко: opencode — это CLI/TUI. Здесь — компактный PWA-клиент к `opencode serve`: чат, сессии, стриминг, лог инструментов, статусы, выбор модели и стоп. Заточен под телефон, но работает и на ПК.
