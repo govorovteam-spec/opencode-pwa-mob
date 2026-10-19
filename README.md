@@ -11,15 +11,9 @@ opencode is a terminal AI agent. This project is a compact browser UI for it: in
 
 > Коротко: opencode — это CLI/TUI. Здесь — компактный PWA-клиент к `opencode serve`: чат, сессии, стриминг, лог инструментов, статусы, выбор модели и стоп. Заточен под телефон, но работает и на ПК.
 
-## Скриншоты
+## Скриншот
 
-Десктоп:
-
-![Desktop](docs/screenshot-desktop.png)
-
-Мобильный:
-
-<img src="docs/screenshot-mobile.png" width="320" alt="Mobile">
+<img src="docs/screenshot-mobile-frame.png" width="360" alt="OpenCode PWA Mob на телефоне">
 
 ---
 

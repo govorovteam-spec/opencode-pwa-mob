@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>OpenCode PWA Mob — phone</title>
+<style>
+  html,body{height:100%}
+  body{margin:0;display:flex;align-items:center;justify-content:center;min-height:100vh;
+    background:radial-gradient(900px 700px at 50% 15%,#161616 0%,#0a0a0a 55%,#030303 100%)}
+  .phone{position:relative;width:416px;height:872px;padding:11px;border-radius:58px;
+    background:linear-gradient(145deg,#2a2a2a,#111 40%,#1c1c1c 70%,#0b0b0b);
+    box-shadow:0 0 0 2px #333, 0 40px 100px rgba(0,0,0,.85), inset 0 0 0 2px #0a0a0a}
+  .phone:before{content:'';position:absolute;left:50%;top:20px;transform:translateX(-50%);
+    width:112px;height:26px;background:#000;border-radius:18px;z-index:6;box-shadow:inset 0 0 0 1px #151515}
+  .screen{width:394px;height:850px;border-radius:47px;overflow:hidden;background:#000;position:relative;
+    box-shadow:inset 0 0 0 1px #222;display:flex;flex-direction:column}
+  .status{height:40px;flex:0 0 auto;background:#0b0b0b;display:flex;align-items:flex-end;justify-content:space-between;padding:0 20px 6px;font-size:11px;color:#c9c9c9;box-sizing:border-box}
+  .screen img{width:100%;height:810px;display:block;object-fit:contain;object-position:top;background:#000}
+  .btn{position:absolute;width:3px;background:linear-gradient(#3a3a3a,#222);border-radius:3px}
+  .b1{left:-3px;top:150px;height:34px}
+  .b2{left:-3px;top:205px;height:58px}
+  .b3{left:-3px;top:275px;height:58px}
+  .b4{right:-3px;top:210px;height:92px}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="btn b1"></div><div class="btn b2"></div><div class="btn b3"></div><div class="btn b4"></div>
+    <div class="screen"><div class="status"><span>9:41</span><span>▂▄▆ 100%</span></div><img src="screenshot-mobile.png" alt="OpenCode PWA Mob"></div>
+  </div>
+</body>
+</html>
