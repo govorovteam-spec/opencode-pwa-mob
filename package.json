@@ -1,0 +1,11 @@
+{
+  "name": "opencode-pwa-mob",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mobile PWA client for opencode",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "license": "MIT"
+}

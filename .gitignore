@@ -1,0 +1,6 @@
+.env
+opencode-config/
+opencode-data/
+node_modules/
+*.log
+.DS_Store

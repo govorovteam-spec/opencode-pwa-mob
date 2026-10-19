@@ -1,0 +1,27 @@
+services:
+  opencode:
+    image: ghcr.io/anomalyco/opencode:latest
+    command: ["serve", "--port", "8888", "--hostname", "0.0.0.0"]
+    environment:
+      OPENCODE_SERVER_PASSWORD: ${OPENCODE_PASSWORD}
+    volumes:
+      - ./opencode-config:/root/.config/opencode
+      - opencode-data:/root/.local/share/opencode
+    restart: unless-stopped
+
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      OPENCODE_URL: http://opencode:8888
+      OPENCODE_PASSWORD: ${OPENCODE_PASSWORD}
+      WEB_USER: ${WEB_USER:-admin}
+      WEB_PASSWORD: ${WEB_PASSWORD}
+      DEFAULT_MODEL: ${DEFAULT_MODEL:-}
+    depends_on:
+      - opencode
+    restart: unless-stopped
+
+volumes:
+  opencode-data:
