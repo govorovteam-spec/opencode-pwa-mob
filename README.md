@@ -1,4 +1,4 @@
-﻿# OpenCode PWA Mob
+# OpenCode PWA Mob
 
 **Mobile PWA client for [opencode](https://opencode.ai).**
 
@@ -66,7 +66,7 @@ opencode serve :8888
 Подробная пошаговая инструкция (Docker, консольный opencode, внешний сервер): [docs/INSTALL.md](docs/INSTALL.md).
 
 ```bash
-git clone https://github.com/<you>/opencode-pwa-mob.git
+git clone https://github.com/govorovteam-spec/opencode-pwa-mob.git
 cd opencode-pwa-mob
 bash scripts/setup.sh
 ```
@@ -209,3 +209,4 @@ OPENCODE_SERVER_PASSWORD=... opencode serve --port 8888 --hostname 0.0.0.0
 ## Лицензия
 
 MIT — см. [LICENSE](LICENSE).
+
