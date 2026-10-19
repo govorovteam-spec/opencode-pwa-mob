@@ -1,0 +1,207 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8">
+<title>OpenCode на телефоне: мобильный PWA-клиент к терминальному AI-агенту — Хабр (превью)</title>
+<style>
+  :root{--bg:#f5f5f5;--card:#fff;--text:#2b2b2b;--muted:#8a8a8a;--link:#548eaa;--line:#e5e5e5;--code:#f6f6f6}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;line-height:1.6}
+  .top{background:#fff;border-bottom:1px solid var(--line);height:56px;display:flex;align-items:center;padding:0 24px;gap:28px;position:sticky;top:0;z-index:5}
+  .logo{font-size:24px;font-weight:800;color:#548eaa;letter-spacing:-.5px}
+  .top nav{display:flex;gap:22px;color:#555;font-size:14px}
+  .top .right{margin-left:auto;color:#548eaa;font-size:14px}
+  .layout{max-width:1120px;margin:24px auto;display:flex;gap:24px;padding:0 20px;align-items:flex-start}
+  .article{background:var(--card);border-radius:8px;padding:32px 40px;flex:1;min-width:0;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+  .article h1{font-size:32px;line-height:1.25;margin:0 0 14px;font-weight:700}
+  .meta{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .meta b{color:#548eaa;font-weight:600}
+  .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+  .tags span{background:#eef3f6;color:#548eaa;border-radius:4px;padding:2px 9px;font-size:13px}
+  .article h2{font-size:23px;margin:34px 0 12px;font-weight:700}
+  .article p{margin:0 0 16px}
+  .article a{color:var(--link);text-decoration:none}
+  .article a:hover{text-decoration:underline}
+  .article ul{margin:0 0 16px 22px}
+  .article li{margin:6px 0}
+  .article code{background:#eef0f2;border-radius:3px;padding:1px 5px;font-family:Consolas,Menlo,monospace;font-size:14px}
+  .article pre{background:var(--code);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow:auto;margin:0 0 18px}
+  .article pre code{background:none;padding:0;font-size:13.5px;line-height:1.55;white-space:pre}
+  .article hr{border:none;border-top:1px solid var(--line);margin:28px 0}
+  .article figure{margin:22px 0}
+  .article figure img{max-width:100%;border-radius:6px;border:1px solid var(--line);display:block}
+  .article figcaption{color:var(--muted);font-size:13px;margin-top:6px;text-align:center}
+  .side{width:260px;flex:0 0 260px}
+  .card{background:var(--card);border-radius:8px;padding:18px;box-shadow:0 1px 2px rgba(0,0,0,.05);margin-bottom:16px}
+  .author{display:flex;align-items:center;gap:12px}
+  .avatar{width:44px;height:44px;border-radius:50%;background:#3f5c96;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .author .nm{font-weight:600;font-size:14px}
+  .author .ro{color:var(--muted);font-size:12px}
+  .stats{display:flex;gap:18px;color:var(--muted);font-size:13px;margin-top:14px}
+  @media (max-width:900px){.layout{display:block}.side{width:auto;margin-top:16px}.article{padding:22px 18px}.article h1{font-size:26px}}
+</style></head><body>
+<div class="top"><div class="logo">Хабр</div><nav><span>Публикации</span><span>Новости</span><span>Хабы</span><span>Авторы</span></nav><div class="right">Войти</div></div>
+<div class="layout">
+  <main class="article">
+    <h1>OpenCode на телефоне: мобильный PWA-клиент к терминальному AI-агенту</h1>
+    <div class="meta"><b>Александр Говоров</b> · сегодня в 10:00 · 10 мин чтения</div>
+    <div class="tags"><span>AI</span><span>LLM</span><span>OpenCode</span><span>PWA</span><span>Node.js</span><span>Docker</span></div>
+    <p><em>Материал подготовлен с помощью AI-ассистента OpenCode; факты, код и выводы проверены автором.</em></p>
+<p>Я каждый день работаю с <a href="https://opencode.ai">opencode</a> — терминальным AI-агентом, который правит код, запускает команды и держит контекст проекта. На ПК всё отлично: TUI, хоткеи, привычный workflow. Проблема начинается, когда нужно отойти от ноутбука: посмотреть, что делает агент, ответить на вопрос или запустить задачу с телефона.</p>
+<p>У opencode есть официальный веб-интерфейс (<code>opencode web</code>), и это важно сказать сразу. Но он проектный: сначала нужно добавить папку проекта, потом создать сессию. Для сценария «достал телефон, открыл чат, написал» это лишние шаги. Плюс мне хотелось видеть привычный лог инструментов и статусы, а не абстрактный спиннер.</p>
+<p>Так появился <strong>OpenCode PWA Mob</strong> — тонкий PWA-клиент к <code>opencode serve</code>. В этой статье — архитектура, код, грабли и честное сравнение с официальным UI.</p>
+<p>Репозиторий: <a href="https://github.com/govorovteam-spec/opencode-pwa-mob">github.com/govorovteam-spec/opencode-pwa-mob</a></p>
+<hr>
+<h2>Что уже есть у opencode</h2>
+<p>opencode умеет запускаться как сервер:</p>
+<pre><code>OPENCODE_SERVER_PASSWORD=secret opencode serve --port 8888 --hostname 0.0.0.0</code></pre>
+<p>Сервер отдаёт HTTP API: сессии, сообщения, модели, события. Официальный <code>opencode web</code> — это фронтенд к этому же API. Мой проект — альтернативный фронтенд: мобильный, компактный и без обязательного выбора проекта.</p>
+<p>Что важно: <strong>своей базы у клиента нет</strong>. Все сессии и сообщения живут в opencode. Клиент — это прокси и SPA.</p>
+<h2>Архитектура</h2>
+<pre><code>Телефон/браузер (PWA)
+        │  HTTP + SSE
+        ▼
+   server.mjs
+   (Basic auth, прокси, стриминг)
+        │  HTTP API
+        ▼
+   opencode serve :8888
+        │
+        ├── DeepSeek / OpenAI / Anthropic / Ollama
+        └── инструменты: bash, edit, read, grep…</code></pre>
+<p>Три задачи <code>server.mjs</code>:</p>
+<p>1. Отдать статику (один HTML); 2. Закрыть всё Basic-авторизацией; 3. Проксировать API и SSE, чтобы браузер не общался с opencode напрямую.</p>
+<h2>Прокси: 60 строк</h2>
+<p>Вся связь с opencode — одна функция:</p>
+<pre><code>const OC_URL = process.env.OPENCODE_URL || 'http://127.0.0.1:8888';
+const OC_AUTH = 'Basic ' + Buffer.from('opencode:' + process.env.OPENCODE_PASSWORD).toString('base64');
+
+async function oc(method, path, body) {
+  const r = await fetch(OC_URL + path, {
+    method,
+    headers: { 'Authorization': OC_AUTH, 'Content-Type': 'application/json' },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  return { status: r.status, text: await r.text() };
+}</code></pre>
+<p>Дальше — обычные ручки: <code>POST /api/send</code>, <code>GET /api/messages</code>, <code>POST /api/stop</code>, <code>GET /api/models</code>, <code>GET /api/menu</code>. <code>send</code> создаёт сессию, если её нет, ставит модель и отправляет prompt:</p>
+<pre><code>if (!sid) {
+  const c = await oc('POST', '/api/session', { title: 'Chat' });
+  sid = JSON.parse(c.text).data.id;
+}
+await oc('POST', `/api/session/${sid}/model`, { model: b.model });
+await oc('POST', `/api/session/${sid}/prompt`, { prompt: { text: b.text } });</code></pre>
+<h2>Стриминг без велосипеда</h2>
+<p>opencode отдаёт события через SSE. Прокси просто перекладывает поток:</p>
+<pre><code>res.writeHead(200, {
+  'Content-Type': 'text/event-stream; charset=utf-8',
+  'Cache-Control': 'no-cache, no-transform',
+  'Connection': 'keep-alive',
+  'X-Accel-Buffering': 'no'
+});
+const r = await fetch(`${OC_URL}/api/session/${sid}/event`, {
+  headers: { 'Authorization': OC_AUTH, 'Accept': 'text/event-stream' }
+});
+const reader = r.body.getReader();
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+  res.write(Buffer.from(value));
+}</code></pre>
+<p>На клиенте — обычный <code>EventSource</code>. По событиям обновляю статус и подтягиваю сообщения:</p>
+<pre><code>if (/reasoning\.(started|delta)/.test(t)) setStatus('Размышление');
+else if (/tool\.(called|progress)/.test(t)) setStatus('Выполнение');
+else if (/text\.(started|delta)/.test(t)) setStatus('Ответ');
+else if (/compaction\.(started|delta)/.test(t)) setStatus('Сжатие чата');</code></pre>
+<h2>Лог инструментов, а не спиннер</h2>
+<p>Мне важно видеть, что именно делает агент. Сообщения opencode приходят частями: текст, reasoning и <code>tool</code>. Из tool-частей собираю компактные строки:</p>
+<pre><code>function verb(n) {
+  return ({
+    bash: 'Оболочка', write: 'Написать', edit: 'Редактировать',
+    read: 'Читать', grep: 'Поиск', glob: 'Поиск',
+    webfetch: 'Открыть', task: 'Задача'
+  })[n] || n;
+}</code></pre>
+<p>Для <code>edit</code>/<code>write</code> считаю diff по входным строкам и показываю <code>+N −M</code>:</p>
+<pre><code>if (n === 'edit') {
+  const a = String(inp.newString || '').split('\n').length;
+  const r = String(inp.oldString || '').split('\n').length;
+  return `&lt;span class="a"&gt;+${a}&lt;/span&gt; &lt;span class="d"&gt;−${r}&lt;/span&gt;`;
+}</code></pre>
+<p>Получается как в TUI: «Оболочка <code>npm test</code>», «Редактировать <code>server.mjs</code> +12 −3».</p>
+<h2>PWA: установка на телефон</h2>
+<p>Клиент — один HTML плюс манифест и service worker. Манифест:</p>
+<pre><code>{
+  "name": "OpenCode PWA Mob",
+  "short_name": "OpenCode",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0b0b",
+  "theme_color": "#0b0b0b",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}</code></pre>
+<p>Service worker кэширует оболочку, но <strong>не трогает <code>/api/</code></strong> — иначе стриминг и сессии сломаются:</p>
+<pre><code>if (u.pathname.startsWith('/api/')) return;</code></pre>
+<p>Установка работает по HTTPS (или localhost): «Добавить на главный экран» → приложение открывается без адресной строки.</p>
+<h2>Docker: одна команда</h2>
+<p>В репозитории — compose с официальным образом opencode и клиентом:</p>
+<pre><code>services:
+  opencode:
+    image: ghcr.io/anomalyco/opencode:latest
+    command: ["serve", "--port", "8888", "--hostname", "0.0.0.0"]
+    environment:
+      OPENCODE_SERVER_PASSWORD: ${OPENCODE_PASSWORD}
+
+  web:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      OPENCODE_URL: http://opencode:8888
+      OPENCODE_PASSWORD: ${OPENCODE_PASSWORD}
+      WEB_USER: ${WEB_USER:-admin}
+      WEB_PASSWORD: ${WEB_PASSWORD}</code></pre>
+<p><code>opencode serve</code> наружу не публикуется — только клиент. Для HTTPS достаточно Caddy:</p>
+<pre><code>chat.example.com {
+    reverse_proxy 127.0.0.1:3000
+}</code></pre>
+<h2>Что получилось</h2>
+<figure><img src="docs/screenshot-mobile-frame.png" alt="Мобильный"><figcaption>Мобильный</figcaption></figure>
+<p>Что умеет:</p>
+<ul>
+<li>чат и продолжение сессий;</li>
+<li>стриминг ответа;</li>
+<li>лог инструментов и diff;</li>
+<li>статусы: размышление, выполнение, ответ, сжатие чата, ошибка, остановлено;</li>
+<li>выбор модели и стоп;</li>
+<li><code>/</code> — команды и навыки opencode;</li>
+<li>PWA на телефон.</li>
+</ul>
+<h2>Грабли</h2>
+<p><strong>SSE и reverse-proxy.</strong> nginx по умолчанию буферизует ответы — стриминг «залипает». Лечится <code>proxy_buffering off;</code> и заголовком <code>X-Accel-Buffering: no</code>.</p>
+<p><strong>PWA и HTTPS.</strong> По <code>http://IP:3000</code> установка не предложится. Нужен HTTPS или localhost.</p>
+<p><strong>Официальный UI и проекты.</strong> <code>opencode web</code> сначала просит добавить проект (папку). Мой клиент создаёт сессию напрямую — для сценария «просто чат» это удобнее.</p>
+<p><strong>Версии API.</strong> opencode развивается, API может меняться. Клиент — тонкий; при изменениях правится в одном месте.</p>
+<p><strong>Безопасность.</strong> <code>opencode serve</code> нельзя выставлять в интернет. Клиент закрыт Basic auth, но для публичного доступа обязателен HTTPS и нормальный reverse-proxy.</p>
+<h2>Зачем свой клиент, если есть официальный</h2>
+<p>Честный ответ: если нужен полный веб-интерфейс — берите <code>opencode web</code>. Свой клиент имеет смысл, когда нужно:</p>
+<ul>
+<li>мобильный сценарий: PWA, крупные кнопки, компактный чат;</li>
+<li>встроить агента в свой продукт (у меня он живёт вкладкой в трекере);</li>
+<li>свой UX: лог инструментов, статусы, стоп, минимум лишнего;</li>
+<li>подключиться к удалённому <code>opencode serve</code> без выставления полного UI.</li>
+</ul>
+<h2>Ссылки</h2>
+<ul>
+<li>Репозиторий: https://github.com/govorovteam-spec/opencode-pwa-mob</li>
+<li>Установка: https://github.com/govorovteam-spec/opencode-pwa-mob/blob/main/docs/INSTALL.md</li>
+<li>opencode: https://opencode.ai</li>
+</ul>
+<p>Лицензия — MIT. Если пригодится — ставьте звезду и пишите issue.</p>
+
+  </main>
+  <aside class="side">
+    <div class="card"><div class="author"><div class="avatar">АГ</div><div><div class="nm">Александр Говоров</div><div class="ro">AI-автоматизация, HoReCa</div></div></div><div class="stats"><span>+12</span><span>3 комментария</span><span>2k просмотров</span></div></div>
+    <div class="card" style="color:var(--muted);font-size:13px">Превью оформления статьи. Реальный Хабр может отличаться.</div>
+  </aside>
+</div>
+</body></html>
