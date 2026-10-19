@@ -4,3 +4,4 @@ opencode-data/
 node_modules/
 *.log
 .DS_Store
+docs/habr-preview.html
